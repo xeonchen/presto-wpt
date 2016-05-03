@@ -1,0 +1,18 @@
+This endpoint is meant to run on a server and receive callbacks from webpagetest.com.
+It keeps a list of runs organized by domain, with some aditional metadata, such as browser name and version.
+
+API:
+
+/api/get/:domain
+- returns a JSON array of objects representing test runs.
+- the object have the following format: { id: "", connectivity: "", browser_name: "", browser_version: ""}
+
+/api/all
+- returns a JSON array containing all the test runs.
+
+/api/domains
+- returns an array containing all the domains for which we hold any results
+
+/api/addDomain
+- used as a callback for webpagetest.com
+- has an id query parameter holding the test ID
