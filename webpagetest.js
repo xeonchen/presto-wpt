@@ -175,7 +175,7 @@ if (Meteor.isServer) {
             'runs': 10,
             'pingback': Meteor.settings.pingback
           }
-    return HTTP.get('http://localhost', { params: params });
+    return HTTP.get('https://www.webpagetest.org/runtest.php', { params: params });
   }
 
   function requestAll(targetDomain, locations, count) {
