@@ -4,5 +4,41 @@
 </head>
 
 <body>
-This is just an API.
+
+<div>
+{{> loginButtons}}
+</div>
+
+{{#if currentUser}}
+  {{> outstanding}}
+  {{> submitForm}}
+{{else}}
+  You need to register and log in to be able to trigger tests.
+{{/if}}
+
+
 </body>
+
+<template name="outstanding">
+  Number of outstanding requests: {{ requests }} <br/>
+</template>
+
+<template name="submitForm">
+  Domain: <input id="domain" value="*" />
+  Location/browser:
+
+  <select id="location">
+    <option disabled="disabled" selected="selected">Please Select</option>
+    <option value="_all_">All</option>
+    <option value="_release_">Firefox & Chrome</option>
+    <option value="_nightly_">Nightly & Canary</option>
+    {{#each locations}}
+        <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+
+  Count: <input id="count" value="10"/>
+  <!-- hostname/* for all -->
+  <!-- browser(location)/* for all -->
+  <button id="button"> Trigger tests</button>
+</template>
