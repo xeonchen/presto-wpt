@@ -7,7 +7,7 @@ getResult = function (testID) {
       var response = result.data;
       var browser_name = response.data.runs[1] ? response.data.runs[1].firstView.browser_name : 'none';
       var browser_version = response.data.runs[1] ? response.data.runs[1].firstView.browser_version : 'none';
-      Results.upsert({ url: response.data.url, id: response.data.id }, { url: response.data.url, id: response.data.id, connectivity: response.data.connectivity, browser_name: browser_name, browser_version: browser_version, date: new Date() });
+      Results.upsert({ url: response.data.url, id: response.data.id }, { url: response.data.url, id: response.data.id, connectivity: response.data.connectivity, browser_name: browser_name, browser_version: browser_version, date: new Date(), label: response.data.label });
       console.log(response.data.id);
     }
   });
@@ -23,7 +23,21 @@ Router.route('getResultsForDomain', {
             var results = Results.find({url: decodeURIComponent(this.params.domain)}, {sort: {browser_name: 1}}).fetch();
             for (var i in results) {
               var result = results[i];
-              response.push({ id: result.id, connectivity: result.connectivity, browser_name: result.browser_name, browser_version: result.browser_version});
+
+              // By default we only return runs that have no label
+              if ((!this.params.query || !this.params.query.label) && result.label) {
+                continue;
+              }
+              if (this.params.query && this.params.query.label) {
+                if (!result.label) {
+                  continue; // result has no label, but label requested
+                }
+                if (!result.label.split(",").includes(this.params.query.label)) {
+                  continue; // none of the labels match
+                }
+              }
+
+              response.push({ id: result.id, connectivity: result.connectivity, browser_name: result.browser_name, browser_version: result.browser_version, label: result.label});
             }
 
             this.response.end(JSON.stringify(response));
@@ -110,7 +124,6 @@ if (Meteor.isClient) {
   Meteor.startup(function() {
     setInterval(function() {
       Meteor.call('requests', function(error, value) {
-        console.log('timeout',value);
         outstandingCounter.set(value);
       });
     }, 10000);
@@ -205,8 +218,6 @@ if (Meteor.isServer) {
 
   Meteor.methods({
       'submitTask': function(domain, locations, count) {
-          console.log(domain,locations,count);
-
           var domainCount = 1;
           if (domain == '*') {
             domainCount = top100.length;
