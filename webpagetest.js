@@ -1,7 +1,7 @@
 Results = new Mongo.Collection('results');
 
 getResult = function (testID) {
-  HTTP.get('http://www.webpagetest.org/jsonResult.php', {params: {test: testID}}, function (error, result) {
+  HTTP.get(Meteor.settings.endpoint + "/jsonResult.php", {params: {test: testID}}, function (error, result) {
     // body...
     if (!error) {
       var response = result.data;
@@ -188,7 +188,7 @@ if (Meteor.isServer) {
             'runs': 10,
             'pingback': Meteor.settings.pingback
           }
-    return HTTP.get('https://www.webpagetest.org/runtest.php', { params: params });
+    return HTTP.get(Meteor.settings.endpoint+'/runtest.php', { params: params });
   }
 
   function requestAll(targetDomain, locations, count) {

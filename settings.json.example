@@ -2,5 +2,6 @@
   "key": "_API_KEY_",
   "public": {"locations": ["Dulles:Firefox", "Dulles:Chrome", "Dulles:Firefox Nightly", "Dulles:Canary"]},
   "repeatCount": 10,
-  "pingback": "http://presto-wpt.herokuapp.com/api/addDomain"
+  "pingback": "http://presto-wpt.herokuapp.com/api/addDomain",
+  "endpoint": "https://www.webpagetest.org"
 }
