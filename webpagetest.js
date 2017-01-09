@@ -63,6 +63,31 @@ Router.route('all', {
     }
 );
 
+Router.route('getBrowsers', {
+        path: '/api/browsers',
+        where: 'server',
+        action: function() {
+            this.response.writeHead(200, {'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*'});
+
+            var browsers = [];
+            var results = Results.find({}, {sort: {browser_name: 1}}).fetch();
+
+            if (results.length > 0)
+              browsers.push({browser_name: results[0].browser_name, browser_version: results[0].browser_version});
+
+            for (var i = 1; i < results.length; i++) {
+              if (results[i].browser_name == results[i-1].browser_name &&
+                  results[i].browser_version == results[i-1].browser_version) {
+                continue;
+              }
+              browsers.push({browser_name: results[i].browser_name, browser_version: results[i].browser_version});
+            }
+
+            this.response.end(JSON.stringify(browsers));
+        }
+  }
+);
+
 Router.route('getDomains', {
         path: '/api/domains',
         where: 'server',
